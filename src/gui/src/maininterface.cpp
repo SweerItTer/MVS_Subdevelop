@@ -233,6 +233,23 @@ int MainInterface::uiInitialize()
 		ui->openDevpbt->setEnabled(true);
 		INFO() << "Device is closed.";
 	});
+	// 强转触发模式
+	connect(ui->spinExposure, QOverload<double>::of(&QDoubleSpinBox::valueChanged), [this](double value){
+		if (!m_pMvcamera) return;
+		int nRet = m_pMvcamera->SetFloatValue("ExposureTime", value);
+		if (nRet != MV_OK) {
+			ERROR() << QString("SetExposureTimeValue errer: %1").arg(nRet);
+			return;
+		}
+	});
+	connect(ui->spinGain, QOverload<double>::of(&QDoubleSpinBox::valueChanged), [this](double value){
+		if (!m_pMvcamera) return;
+		int nRet = m_pMvcamera->SetFloatValue("Gain", value);
+		if (nRet != MV_OK) {
+			ERROR() << QString("SetGainValue errer: %1").arg(nRet);
+			return;
+		}
+	});
 
 	return MV_OK;
 }
@@ -358,5 +375,92 @@ void MainInterface::on_continuousMode_clicked()
 		m_pFrame->Stop();
 	}
 	m_pFrame->Start();
+}
+
+// 获取相机相关数据
+void MainInterface::on_getParameter_clicked()
+{
+	int nRet = MV_OK;
+	// 获取浮点类型
+	MVCC_FLOATVALUE ExposureValue = {0};
+	MVCC_FLOATVALUE GainValue = {0};
+//	MVCC_FLOATVALUE FrameRate = {0};
+	nRet = m_pMvcamera->GetFloatValue("ExposureTime", &ExposureValue);
+	if (nRet != MV_OK){
+		ERROR() << QString("GetExposureValue error:%1").arg(nRet);
+		return;
+	}
+	nRet = m_pMvcamera->GetFloatValue("Gain", &GainValue);
+	if (nRet != MV_OK){
+		ERROR() << QString("GetGainValue error:%1").arg(nRet);
+		return;
+	}
+//	nRet = m_pMvcamera->GetFloatValue("ResultingFrameRate ", &FrameRate);
+//	if (nRet != MV_OK){
+//		ERROR() << QString("GetResultingFrameRate error:%1").arg(nRet);
+//		return;
+//	}
+
+	// 获取像素格式的当前枚举值
+	MVCC_ENUMVALUE PixelFormatEnumValue = {0};
+	nRet = m_pMvcamera->GetEnumValue("PixelFormat", &PixelFormatEnumValue);
+	if (nRet != MV_OK) {
+		ERROR() << QString("GetPixelFormatEnumValue errer: %1").arg(nRet);
+		return;
+	}
+
+	// 根据枚举值获取对应的符号名称
+	MVCC_ENUMENTRY PixelFormatEntry = {0};
+	PixelFormatEntry.nValue = PixelFormatEnumValue.nCurValue;
+	nRet = m_pMvcamera->GetEnumEntrySymbolic("PixelFormat", &PixelFormatEntry);
+	if (nRet != MV_OK) {
+		ERROR() << QString("GetPixelFormatEntry errer: %1").arg(nRet);
+		return;
+	}
+
+	// 更新UI控件
+	float ExposureTime = ExposureValue.fCurValue;
+	float Gain = GainValue.fCurValue;
+//	float Rate = FrameRate.fCurValue;
+	QString PixelFormat = QString::fromLatin1(PixelFormatEntry.chSymbolic);
+
+	ui->spinExposure->setValue(static_cast<double>(ExposureTime));
+	ui->spinGain->setValue(static_cast<double>(Gain));
+//	ui->spinFrameRate->setValue(static_cast<double>(Rate));
+	ui->LinePixelFormat->setText(PixelFormat); // 确保控件名和函数名正确
+}
+
+
+void MainInterface::on_setParameter_clicked()
+{
+	int nRet = MV_OK;
+	do{
+		nRet = m_pMvcamera->SetFloatValue("ExposureTime", ui->spinExposure->value());
+		nRet = m_pMvcamera->SetFloatValue("Gain", ui->spinGain->value());
+	} while(0);
+	if (nRet != MV_OK) {
+		ERROR() << QString("SetFloatValue errer: %1").arg(nRet);
+		return;
+	}
+}
+
+void MainInterface::on_saveBMPpbt_clicked()
+{
+	m_pFrame->saveCurrentFrame(MV_Image_Bmp);
+}
+
+void MainInterface::on_saveJPGpbt_clicked()
+{
+	m_pFrame->saveCurrentFrame(MV_Image_Jpeg);
+}
+
+void MainInterface::on_saveTiffpbt_clicked()
+{
+	m_pFrame->saveCurrentFrame(MV_Image_Tif);
+}
+
+void MainInterface::on_savePNGpbt_clicked()
+{
+	m_pFrame->saveCurrentFrame(MV_Image_Png);
 }
 

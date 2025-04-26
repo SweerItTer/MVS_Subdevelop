@@ -1,4 +1,4 @@
-﻿#ifndef MAININTERFACE_H
+#ifndef MAININTERFACE_H
 #define MAININTERFACE_H
 
 #include <iostream>
@@ -28,6 +28,15 @@ public:
 	~MainInterface();
 
 private slots:
+	// 保存图像
+	void on_saveTiffpbt_clicked();
+	void on_saveJPGpbt_clicked();
+	void on_saveBMPpbt_clicked();
+	void on_savePNGpbt_clicked();
+	// 设置参数
+	void on_setParameter_clicked();
+	void on_getParameter_clicked();
+
 	void on_tigger1_released();
 	void on_continuousMode_clicked();
 	void on_triggerMode_clicked();

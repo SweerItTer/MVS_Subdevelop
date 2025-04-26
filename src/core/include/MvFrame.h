@@ -1,4 +1,4 @@
-﻿#ifndef MVFRAME_H
+#ifndef MVFRAME_H
 #define MVFRAME_H
 
 #include <vector>
@@ -18,6 +18,10 @@ class MvFrame : public QThread
 	Q_OBJECT
 
 public:
+	enum DisplayMode {
+		ContinuousMode,  // 连续模式（默认）
+		SingleFrameMode  // 单帧模式
+	};
 	explicit MvFrame(QObject *parent = nullptr, HWND hwnd = nullptr, CMvCamera* mCamera = nullptr);
 	~MvFrame();
 
@@ -25,6 +29,8 @@ public:
 	void Stop();
 
 	void ShowImage();
+	void setDisplayMode(DisplayMode mode);
+	void saveCurrentFrame(MV_SAVE_IAMGE_TYPE type); // 保存接口
 protected:
 	void run() override;
 
@@ -38,6 +44,8 @@ private:
 
 	std::atomic<bool> quit;
 	std::atomic<int> m_times;
+	std::atomic<DisplayMode> m_displayMode{ContinuousMode};
+	MV_CC_IMAGE m_currentFrame{}; // 单帧模式下保存的当前帧
 
 	std::vector<MV_CC_IMAGE> *ImageDataList = nullptr;
 };
