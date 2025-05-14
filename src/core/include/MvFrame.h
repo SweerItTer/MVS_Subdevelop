@@ -45,9 +45,12 @@ private:
 	std::atomic<bool> quit;
 	std::atomic<int> m_times;
 	std::atomic<DisplayMode> m_displayMode{ContinuousMode};
-	MV_CC_IMAGE m_currentFrame{}; // 单帧模式下保存的当前帧
+	MV_CC_IMAGE currentFrame{}; // 单帧模式下保存的当前帧
 
 	std::vector<MV_CC_IMAGE> *ImageDataList = nullptr;
+private:
+	void CopyFrame(MV_CC_IMAGE& dst, const MV_CC_IMAGE& src);
+
 };
 
 #endif // MVFRAME_H
