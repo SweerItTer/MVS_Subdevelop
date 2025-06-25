@@ -1,6 +1,9 @@
 # This file is used to ignore files which are generated
 # ----------------------------------------------------------------------------
 
+/.vscode
+CMakeLists.txt.user
+
 *~
 *.autosave
 *.a
@@ -71,3 +74,4 @@ Thumbs.db
 *.dll
 *.exe
 
+CMakeLists.txt.user
