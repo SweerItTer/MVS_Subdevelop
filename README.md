@@ -47,6 +47,3 @@ cmake --build . --config Release
 3. **标注工具**  
    - 支持创建训练数据集
    - PASCAL VOC/COCO格式导出
-
-## 授权协议
-MIT License © 2024 [您的姓名/组织]
