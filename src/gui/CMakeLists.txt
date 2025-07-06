@@ -26,7 +26,11 @@ target_include_directories(GuiModule PUBLIC
 )
 
 target_link_libraries(GuiModule PRIVATE
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Sql
+    Qt${QT_VERSION_MAJOR}::Network
     CoreModule
     ModelModule
 )

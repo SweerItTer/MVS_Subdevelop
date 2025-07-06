@@ -21,9 +21,11 @@ else()
 endif()
 message(STATUS "Target Architecture: ${ARCH_TYPE}")
 
+add_definitions(/w)
+
 # Qt配置 -----------------------------------------------------
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Core Gui Widgets Sql Network REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Gui Widgets Sql Network REQUIRED)
 # SDK配置 ----------------------------------------------------
 if(NOT DEFINED ENV{MVCAM_COMMON_RUNENV})
     message(FATAL_ERROR "MVCAM_COMMON_RUNENV environment variable not set!")
@@ -46,6 +48,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     GuiModule
     ModelModule
     Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Sql
 )
 
 # 安装配置 ---------------------------------------------------
